@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#482B3A">
+    <meta name="description" content="Shop perfumes, body care, bath essentials and skincare at Som's Fragrance. Filter the collection to find your next favourite.">
+    <title>Shop All Products — Som's Fragrance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="shop.css">
+  </head>
+  <body class="shop-page">
+    <header class="site-header">
+      <div class="utility-bar">
+        <div class="utility-inner">
+          <div class="utility-links">
+            <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 20a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm11 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>Free Delivery Nationwide</span>
+            <i aria-hidden="true"></i>
+            <a class="whatsapp-link" href="https://wa.me/2348109266876" aria-label="Order via WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.6a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.6Z"/><path d="M9 8.5c.4 2.4 2 4 4.5 5"/></svg>Order via WhatsApp</a>
+          </div>
+          <span class="utility-motto"><span aria-hidden="true">✦</span> Look Beautiful. Feel Confident.</span>
+        </div>
+      </div>
+      <div class="nav-shell">
+        <a class="brand" href="index.html#home" aria-label="Som's Fragrance home">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span class="brand-type"><span>Som's</span><span>Fragrance</span></span>
+        </a>
+        <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false"><span></span><span></span></button>
+        <nav class="primary-nav" aria-label="Main navigation">
+          <a class="nav-link" href="index.html#home">Home</a>
+          <a class="nav-link active" href="shop.html" aria-current="page">Shop</a>
+          <a class="nav-link" href="shop.html?category=perfumes">Perfumes</a>
+          <a class="nav-link" href="shop.html?category=body-care">Body Care</a>
+          <a class="nav-link" href="shop.html?category=skincare">Skincare</a>
+          <a class="nav-link" href="index.html#why-us">About Us</a>
+          <a class="nav-link" href="index.html#contact">Contact</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="icon-button search-button" type="button" aria-label="Focus product search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.2 4.2"></path></svg>
+          </button>
+          <span class="action-divider" aria-hidden="true"></span>
+          <button class="icon-button bag-button" type="button" aria-label="Shopping bag, 0 items">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 8.5h13.6l1 12H4.2l1-12Z"></path><path d="M9 9V6.2a3 3 0 0 1 6 0V9"></path></svg>
+            <span class="bag-count">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="shop-intro">
+        <div class="shop-breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><span>Shop all</span></div>
+        <p class="eyebrow">A THOUGHTFUL EDIT OF BEAUTY &amp; SELF CARE</p>
+        <h1>Find your <em>favourite.</em></h1>
+        <p>Fragrance, skin and little everyday rituals — all in one place.</p>
+      </section>
+
+      <section class="catalog" aria-label="Product collection">
+        <div class="catalog-toolbar">
+          <button class="filter-toggle" type="button" aria-expanded="false" aria-controls="filter-panel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10m-7 6h4"/><circle cx="8" cy="6" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="10" cy="18" r="1.5"/></svg>
+            Filters <span class="filter-count" hidden>0</span>
+          </button>
+          <p class="result-count" aria-live="polite"></p>
+          <label class="sort-control">Sort by
+            <select id="sort-products" aria-label="Sort products">
+              <option value="featured">Featured</option>
+              <option value="newest">Newest</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="rating">Top rated</option>
+              <option value="name">Name: A to Z</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="catalog-layout">
+          <button class="filter-backdrop" type="button" aria-label="Close filters"></button>
+          <aside class="filter-panel" id="filter-panel" aria-label="Product filters">
+            <div class="filter-panel-heading">
+              <h2>Filters</h2>
+              <button class="filter-close" type="button" aria-label="Close filters">×</button>
+            </div>
+            <div class="filter-topline">
+              <span>Refine your search</span>
+              <button class="clear-filters" type="button">Clear all</button>
+            </div>
+            <form class="filters-form">
+              <fieldset class="filter-group category-filters">
+                <legend>Category</legend>
+                <div class="category-options"></div>
+              </fieldset>
+              <fieldset class="filter-group">
+                <legend>Price range</legend>
+                <div class="price-inputs">
+                  <label><span>Min (₦)</span><input id="price-min" type="number" min="0" step="500" inputmode="numeric" placeholder="0"></label>
+                  <span class="price-dash" aria-hidden="true">–</span>
+                  <label><span>Max (₦)</span><input id="price-max" type="number" min="0" step="500" inputmode="numeric" placeholder="No limit"></label>
+                </div>
+                <div class="price-presets" aria-label="Quick price filters">
+                  <button type="button" data-min="0" data-max="14999">Under ₦15,000</button>
+                  <button type="button" data-min="15000" data-max="30000">₦15,000–₦30,000</button>
+                  <button type="button" data-min="30001" data-max="">Over ₦30,000</button>
+                </div>
+                <p class="price-error" role="alert" hidden>Enter a valid range. The minimum cannot be more than the maximum.</p>
+              </fieldset>
+              <fieldset class="filter-group">
+                <legend>Customer rating</legend>
+                <label class="check-option"><input type="radio" name="rating" value="0" checked><span>All ratings</span></label>
+                <label class="check-option"><input type="radio" name="rating" value="4"><span class="rating-stars">★★★★★</span><span> &amp; up</span></label>
+                <label class="check-option"><input type="radio" name="rating" value="4.5"><span class="rating-stars">★★★★★</span><span> &amp; up</span></label>
+              </fieldset>
+              <fieldset class="filter-group availability-filters">
+                <legend>Availability &amp; offers</legend>
+                <label class="check-option"><input id="in-stock" type="checkbox"><span>In stock only</span></label>
+                <label class="check-option"><input id="on-sale" type="checkbox"><span>On sale</span></label>
+              </fieldset>
+            </form>
+            <button class="apply-filters" type="button">Show products</button>
+          </aside>
+
+          <div class="catalog-results">
+            <form class="catalog-search" role="search">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.2 4.2"></path></svg>
+              <label class="sr-only" for="catalog-query">Search products</label>
+              <input id="catalog-query" type="search" placeholder="Search fragrance, skincare, bath…">
+              <button type="button" class="clear-search" aria-label="Clear search" hidden>×</button>
+              <button type="submit">Search</button>
+            </form>
+            <div class="active-filters" aria-label="Active filters"></div>
+            <div class="product-grid" aria-live="polite" aria-busy="false"></div>
+            <div class="empty-state" hidden>
+              <span aria-hidden="true">✧</span>
+              <h2>No matches, just yet.</h2>
+              <p>Try a different search or clear a filter to see more of our collection.</p>
+              <button class="empty-clear" type="button">Clear filters</button>
+            </div>
+            <div class="catalog-bottom"><span class="catalog-summary"></span><button class="back-to-top-link" type="button">Back to top ↑</button></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-main">
+        <div class="footer-brand"><a class="brand brand-light" href="index.html#home" aria-label="Som's Fragrance home"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-type"><span>Som's</span><span>Fragrance</span></span></a><p>Look Beautiful. Feel Confident.</p></div>
+        <div class="footer-column"><h2>Quick Links</h2><a href="index.html#home">Home</a><a href="shop.html">Shop</a><a href="index.html#why-us">About Us</a><a href="index.html#contact">Contact</a></div>
+        <div class="footer-column"><h2>Categories</h2><a href="shop.html?category=perfumes">Perfumes</a><a href="shop.html?category=body-care">Creams</a><a href="shop.html?category=bath">Soaps</a><a href="shop.html?category=skincare">Skincare</a></div>
+        <div class="footer-column"><h2>Customer Care</h2><a href="index.html#contact">FAQs</a><a href="index.html#contact">Shipping Info</a><a href="index.html#contact">Returns Policy</a><a href="index.html#contact">Privacy Policy</a></div>
+        <div class="footer-column social-column"><h2>Connect With Us</h2><div class="social-links">
+          <a class="whatsapp-link" href="https://wa.me/2348109266876" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.6a8 8 0 0 1-11.8 7L4 20l1.4-4A8 8 0 1 1 20 11.6Z"/><path d="M9 8.5c.4 2.4 2 4 4.5 5"/></svg></a>
+          <a href="https://instagram.com/" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="18" cy="6" r=".7"/></svg></a>
+          <a href="https://facebook.com/" aria-label="Facebook" class="social-letter">f</a><a href="https://tiktok.com/" aria-label="TikTok" class="social-letter">♪</a>
+        </div></div>
+      </div>
+      <div class="footer-bottom"><span>© 2026 Som's Fragrance. All rights reserved.</span><a href="index.html#home">Beauty Beyond Limits ♥</a></div>
+    </footer>
+    <dialog class="cart-dialog" aria-labelledby="cart-dialog-title"></dialog>
+    <div class="cart-toast" role="status" aria-live="polite"></div>
+    <script src="catalog-data.js"></script>
+    <script src="cart.js"></script>
+    <script src="shop.js"></script>
+  </body>
+</html>

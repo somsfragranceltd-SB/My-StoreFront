@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#482B3A">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Manage the shared Som's Fragrance product catalogue.">
+    <title>Catalogue Admin — Som's Fragrance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin.css">
+  </head>
+  <body class="admin-page">
+    <header class="site-header">
+      <div class="utility-bar"><div class="utility-inner"><span>SHARED CATALOGUE ADMIN</span><span class="utility-motto">Changes publish from GitHub</span></div></div>
+      <div class="nav-shell admin-nav">
+        <a class="brand" href="index.html" aria-label="Som's Fragrance home"><span class="brand-mark" aria-hidden="true">S</span><span class="brand-type"><span>Som's</span><span>Fragrance</span></span></a>
+        <div class="admin-nav-actions">
+          <button class="admin-store-link admin-logout" type="button" hidden>Sign out</button>
+          <a class="admin-store-link" href="shop.html">View storefront ↗</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <section class="admin-welcome">
+        <div><p class="eyebrow">YOUR STORE, YOUR EDIT</p><h1>Catalogue <em>studio</em></h1><p>Manage products and WhatsApp orders. Saved changes publish to your storefront after Netlify finishes deploying.</p></div>
+        <div class="publish-status"><span class="status-dot"></span><span class="save-status" aria-live="polite">Loading your catalogue…</span></div>
+      </section>
+
+      <section class="local-notice" aria-label="Publishing information">
+        <span class="notice-icon" aria-hidden="true">i</span>
+        <p><strong>Shared catalogue.</strong> Product and store-setting changes are committed to the connected GitHub repository. Netlify automatically builds the updated catalogue for all visitors. Large media uploads are stored in the repository; do not store customer or payment information here.</p>
+      </section>
+
+      <section class="admin-stats" aria-label="Catalogue overview">
+        <article class="stat-card"><span>Products</span><strong id="stat-products">0</strong><small>in your catalogue</small></article>
+        <article class="stat-card"><span>Published</span><strong id="stat-published">0</strong><small>visible in the shop</small></article>
+        <article class="stat-card"><span>Low stock</span><strong id="stat-low-stock">0</strong><small>5 or fewer remaining</small></article>
+        <article class="stat-card"><span>Out of stock</span><strong id="stat-out-stock">0</strong><small>check availability</small></article>
+      </section>
+
+      <section class="admin-workspace">
+        <section class="inventory-panel">
+          <div class="inventory-heading">
+            <div><p class="eyebrow">YOUR PRODUCT RANGE</p><h2>Inventory</h2></div>
+            <button class="primary-action add-product-button" type="button">＋ Add product</button>
+          </div>
+          <div class="inventory-tools">
+            <label class="admin-search"><span class="sr-only">Search catalogue</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.2 4.2"></path></svg><input id="admin-search" type="search" placeholder="Search products"></label>
+            <label class="admin-category-select"><span class="sr-only">Filter by category</span><select id="admin-category"><option value="">All categories</option><option value="perfumes">Perfumes</option><option value="body-care">Body care</option><option value="bath">Bath &amp; soaps</option><option value="skincare">Skincare</option></select></label>
+          </div>
+          <div class="inventory-list" id="inventory-list" aria-live="polite"></div>
+          <p class="inventory-empty" hidden>No products match this view.</p>
+        </section>
+
+        <aside class="publish-panel">
+          <p class="eyebrow">PUBLISHING STATUS</p>
+          <h2>From edit<br><em>to storefront.</em></h2>
+          <p>Saving commits the catalogue to GitHub and starts a Netlify deployment. Visitors see the changes when that deployment is live.</p>
+          <section class="store-settings" aria-labelledby="store-settings-title">
+            <h3 id="store-settings-title">WhatsApp orders</h3>
+            <label for="whatsapp-number">Business number with country code</label>
+            <input id="whatsapp-number" type="tel" inputmode="numeric" autocomplete="tel" maxlength="15" placeholder="2348012345678">
+            <p>Digits only, including country code. Saving updates the shared storefront settings.</p>
+            <button class="secondary-action save-whatsapp-number" type="button">Save WhatsApp number</button>
+          </section>
+          <button class="secondary-action refresh-catalogue" type="button">Reload shared catalogue</button>
+          <p class="admin-message" role="status" aria-live="polite"></p>
+        </aside>
+      </section>
+
+      <dialog class="product-dialog" aria-labelledby="product-dialog-title">
+        <form class="product-form">
+          <div class="dialog-heading"><div><p class="eyebrow">CATALOGUE DETAILS</p><h2 id="product-dialog-title">Add a product</h2></div><button class="dialog-close" type="button" aria-label="Close form">×</button></div>
+          <input type="hidden" name="originalId">
+          <div class="form-grid">
+            <label class="field-wide">Product name<input name="name" required maxlength="90" placeholder="e.g. Rose Petal Eau de Parfum"></label>
+            <label>Category<select name="category" required><option value="perfumes">Perfumes</option><option value="body-care">Body creams &amp; lotions</option><option value="bath">Soaps &amp; bath</option><option value="skincare">Skincare &amp; beauty</option></select></label>
+            <label>Brand<input name="brand" maxlength="60" value="Som's Fragrance"></label>
+            <label>Price (₦)<input name="price" type="number" min="1" step="1" inputmode="numeric" required placeholder="28000"></label>
+            <label>Compare-at price (₦)<input name="oldPrice" type="number" min="1" step="1" inputmode="numeric" placeholder="Optional"></label>
+            <label>Stock quantity<input name="stock" type="number" min="0" step="1" inputmode="numeric" required value="1"></label>
+            <label>Rating (0–5)<input name="rating" type="number" min="0" max="5" step="0.1" value="5"></label>
+            <label>Review count<input name="reviews" type="number" min="0" step="1" value="0"></label>
+            <label>Badge<select name="badge"><option value="">No badge</option><option value="New">New</option><option value="Bestseller">Bestseller</option><option value="Popular">Popular</option><option value="On sale">On sale</option></select></label>
+            <label class="published-toggle"><input name="featuredOnHome" type="checkbox"><span>Feature this product on the homepage</span></label>
+            <label class="field-wide">Product image URL or Unsplash photo ID<input name="image" placeholder="https://… or photo-123456789"></label>
+            <label class="field-wide">Or upload a product image (JPG, PNG, or WebP; max 2 MB)<input name="imageFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <label class="field-wide">Short description<textarea name="description" rows="3" maxlength="240" required placeholder="Describe the product in a sentence or two."></textarea></label>
+            <label class="field-wide">Search keywords <span class="field-hint">(optional, separated by spaces)</span><input name="tags" placeholder="floral rose eau de parfum"></label>
+            <label class="published-toggle"><input name="published" type="checkbox" checked><span>Published — show this product in the shop</span></label>
+          </div>
+          <p class="form-error" role="alert"></p>
+          <div class="dialog-actions"><button class="secondary-action cancel-product" type="button">Cancel</button><button class="primary-action save-product" type="submit">Save product</button></div>
+        </form>
+      </dialog>
+      <div class="admin-toast" role="status" aria-live="polite"></div>
+    </main>
+    <script src="admin.js"></script>
+  </body>
+</html>

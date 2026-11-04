@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/api/catalog"
+  to = "/.netlify/functions/catalog"
+  status = 200
+
+[[headers]]
+  for = "/catalog-data.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
