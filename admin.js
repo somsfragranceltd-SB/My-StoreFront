@@ -254,7 +254,7 @@ function readProductForm() {
     id: createUniqueId(name, originalId),
     name,
     category: String(formData.get("category")),
-    brand: String(formData.get("brand") || "").trim() || "Som's Fragrance",
+    brand: String(formData.get("brand") || "").trim() || "Som's Beauty",
     price,
     rating: Number(formData.get("rating")),
     reviews: Number(formData.get("reviews")),

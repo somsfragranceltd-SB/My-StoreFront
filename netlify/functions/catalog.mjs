@@ -245,7 +245,7 @@ async function updateCatalogue(token, payload) {
   const newCommit = await githubRequest("/git/commits", token, {
     method: "POST",
     body: JSON.stringify({
-      message: "Update Som's Fragrance product catalogue",
+      message: "Update Som's Beauty product catalogue",
       tree: newTree.sha,
       parents: [reference.object.sha],
     }),

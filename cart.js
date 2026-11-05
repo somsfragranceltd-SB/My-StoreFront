@@ -16,7 +16,7 @@ cartDialog.innerHTML = `
     <div class="cart-footer">
       <p class="cart-subtotal"><span>Subtotal</span><strong class="cart-subtotal-value">₦0</strong></p>
       <a class="cart-checkout" href="#" target="_blank" rel="noopener noreferrer">Continue on WhatsApp</a>
-      <p class="cart-note">Your order will be sent to Som's Fragrance on WhatsApp for confirmation.</p>
+      <p class="cart-note">Your order will be sent to Som's Beauty on WhatsApp for confirmation.</p>
       <p class="cart-status" role="status" aria-live="polite"></p>
     </div>
   </div>`;
@@ -106,7 +106,7 @@ function updateCheckout(subtotal, hasUnavailableItems) {
     return `${product.name} x${item.quantity} — ${formatCartPrice(product.price * item.quantity)}`;
   });
   const message = [
-    "Hello Som's Fragrance, I would like to place this order:",
+    "Hello Som's Beauty, I would like to place this order:",
     "",
     ...orderLines,
     "",
