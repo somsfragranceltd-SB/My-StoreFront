@@ -2,7 +2,8 @@ import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 
 const SESSION_COOKIE = "soms_admin_session";
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
-const MAX_REQUEST_SIZE = 4 * 1024 * 1024;
+const MAX_CATALOGUE_PRODUCTS = 2000;
+const MAX_REQUEST_SIZE = 5 * 1024 * 1024;
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
 const REPOSITORY_OWNER = "somsfragranceltd-SB";
 const REPOSITORY_NAME = "My-StoreFront";
@@ -105,7 +106,9 @@ function serializeCatalogue(products, storeSettings) {
 }
 
 function validateCatalogue(products, storeSettings) {
-  if (!Array.isArray(products) || products.length > 500) return "Catalogue must contain no more than 500 products.";
+  if (!Array.isArray(products) || products.length > MAX_CATALOGUE_PRODUCTS) {
+    return `Catalogue must contain no more than ${MAX_CATALOGUE_PRODUCTS} products.`;
+  }
   if (!storeSettings || typeof storeSettings.whatsappNumber !== "string" || !/^\d{8,15}$/.test(storeSettings.whatsappNumber)) {
     return "WhatsApp number must contain 8–15 digits, including country code.";
   }
@@ -294,11 +297,12 @@ export default async function handler(request) {
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > MAX_REQUEST_SIZE) return jsonResponse({ error: "The catalogue update is too large." }, 413);
 
+  const rawBody = await request.arrayBuffer();
+  if (rawBody.byteLength > MAX_REQUEST_SIZE) return jsonResponse({ error: "The catalogue update is too large." }, 413);
+
   let payload;
   try {
-    const rawBody = await request.text();
-    if (rawBody.length > MAX_REQUEST_SIZE) return jsonResponse({ error: "The catalogue update is too large." }, 413);
-    payload = JSON.parse(rawBody);
+    payload = JSON.parse(new TextDecoder().decode(rawBody));
   } catch {
     return jsonResponse({ error: "Invalid catalogue update." }, 400);
   }
@@ -306,6 +310,8 @@ export default async function handler(request) {
   if (!payload || !Array.isArray(payload.products) || !payload.storeSettings || typeof payload.storeSettings !== "object") {
     return jsonResponse({ error: "Catalogue products and store settings are required." }, 400);
   }
+  const validation = validateCatalogue(payload.products, payload.storeSettings);
+  if (validation) return jsonResponse({ error: validation }, 400);
 
   try {
     return await updateCatalogue(token, payload);

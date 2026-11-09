@@ -4,6 +4,7 @@ const CATEGORY_LABELS = {
   bath: "Bath & soaps",
   skincare: "Skincare",
 };
+const MAX_CATALOGUE_PRODUCTS = 2000;
 
 const ui = {
   list: document.querySelector("#inventory-list"),
@@ -170,6 +171,9 @@ function validateProduct(product, ids, allowMissingImage = false) {
 
 function validateCatalogue(items) {
   if (!Array.isArray(items)) throw new Error("The catalogue must be a list of products.");
+  if (items.length > MAX_CATALOGUE_PRODUCTS) {
+    throw new Error(`The catalogue can contain no more than ${MAX_CATALOGUE_PRODUCTS.toLocaleString()} products.`);
+  }
   const ids = new Set();
   let homepageFeatured = 0;
   for (const product of items) {
