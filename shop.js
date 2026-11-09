@@ -4,8 +4,6 @@ const categories = [
   { id: "bath", label: "Soaps & Bath Essentials" },
   { id: "skincare", label: "Skincare & Beauty" },
 ];
-const PRODUCTS_PER_PAGE = 24;
-
 let products = window.SOMS_PRODUCTS;
 
 if (!Array.isArray(products)) {
@@ -24,7 +22,7 @@ const elements = {
   sort: document.querySelector("#sort-products"),
   resultCount: document.querySelector(".result-count"),
   productGrid: document.querySelector(".product-grid"),
-  pagination: document.querySelector(".product-pagination"),
+  catalogStatus: document.querySelector(".catalog-sync-status"),
   activeFilters: document.querySelector(".active-filters"),
   emptyState: document.querySelector(".empty-state"),
   catalogSummary: document.querySelector(".catalog-summary"),
@@ -41,7 +39,6 @@ const categoryById = new Map(categories.map((category) => [category.id, category
 const selectedCategories = new Set();
 const queryParams = new URLSearchParams(window.location.search);
 const allowedSorts = new Set(["featured", "newest", "price-asc", "price-desc", "rating", "name"]);
-let currentPage = 1;
 let toastTimeout;
 
 function categoryLabel(categoryId) {
@@ -179,7 +176,6 @@ function sortProducts(list, sort) {
 
 function syncUrl(state) {
   const params = new URLSearchParams();
-  if (currentPage > 1) params.set("page", String(currentPage));
   if (state.categories.size) params.set("category", [...state.categories].join(","));
   if (state.query) params.set("q", elements.query.value.trim());
   if (state.min !== null) params.set("min", String(state.min));
@@ -193,36 +189,7 @@ function syncUrl(state) {
   window.history.replaceState(null, "", nextUrl);
 }
 
-function renderPagination(pageCount) {
-  elements.pagination.hidden = pageCount <= 1;
-  if (pageCount <= 1) {
-    elements.pagination.innerHTML = "";
-    return;
-  }
-
-  const pages = new Set([1, pageCount]);
-  for (let page = Math.max(1, currentPage - 1); page <= Math.min(pageCount, currentPage + 1); page += 1) {
-    pages.add(page);
-  }
-  const visiblePages = [...pages].sort((a, b) => a - b);
-  const controls = [
-    `<button type="button" data-page="${currentPage - 1}" aria-label="Previous page"${currentPage === 1 ? " disabled" : ""}>Previous</button>`,
-  ];
-
-  visiblePages.forEach((page, index) => {
-    if (index > 0 && page - visiblePages[index - 1] > 1) {
-      controls.push('<span class="pagination-ellipsis" aria-hidden="true">…</span>');
-    }
-    const current = page === currentPage;
-    const label = current ? ` aria-current="page" aria-label="Page ${page}, current page"` : ` aria-label="Page ${page}"`;
-    controls.push(`<button type="button" data-page="${page}"${label}>${page}</button>`);
-  });
-  controls.push(`<button type="button" data-page="${currentPage + 1}" aria-label="Next page"${currentPage === pageCount ? " disabled" : ""}>Next</button>`);
-  elements.pagination.innerHTML = controls.join("");
-}
-
-function render({ preservePage = false } = {}) {
-  if (!preservePage) currentPage = 1;
+function render() {
   const state = getFilterState();
   const activeElement = document.activeElement;
   const focusedFilter = activeElement instanceof HTMLInputElement && ["category", "rating"].includes(activeElement.name)
@@ -232,24 +199,17 @@ function render({ preservePage = false } = {}) {
   const maxInvalid = elements.maxPrice.value.trim() !== "" && (!Number.isFinite(Number(elements.maxPrice.value)) || Number(elements.maxPrice.value) < 0);
   const invalidRange = (state.min !== null && state.max !== null && state.min > state.max) || minInvalid || maxInvalid;
   const results = invalidRange ? [] : sortProducts(products.filter((product) => matchesProduct(product, state)), state.sort);
-  const pageCount = Math.ceil(results.length / PRODUCTS_PER_PAGE);
-  currentPage = Math.min(currentPage, Math.max(pageCount, 1));
-  const pageStart = (currentPage - 1) * PRODUCTS_PER_PAGE;
-  const pageResults = results.slice(pageStart, pageStart + PRODUCTS_PER_PAGE);
 
   renderCategoryOptions(state);
   if (focusedFilter) {
     elements.filtersForm.querySelector(`input[name="${focusedFilter.name}"][value="${focusedFilter.value}"]`)?.focus();
   }
   renderActiveFilters(state);
-  elements.productGrid.innerHTML = pageResults.map(renderProduct).join("");
-  renderPagination(pageCount);
+  elements.productGrid.innerHTML = results.map(renderProduct).join("");
   elements.resultCount.textContent = `${results.length} ${results.length === 1 ? "product" : "products"}`;
-  const rangeStart = results.length ? pageStart + 1 : 0;
-  const rangeEnd = Math.min(pageStart + PRODUCTS_PER_PAGE, results.length);
   elements.catalogSummary.textContent = invalidRange
     ? "Check your price range"
-    : `Showing ${rangeStart}–${rangeEnd} of ${results.length} matching products`;
+    : `Showing all ${results.length} matching products`;
   elements.emptyState.hidden = results.length !== 0;
   elements.productGrid.hidden = results.length === 0;
   elements.productGrid.setAttribute("aria-busy", "false");
@@ -285,8 +245,6 @@ function clearAllFilters() {
 }
 
 function initializeFromUrl() {
-  const initialPage = Number(queryParams.get("page"));
-  currentPage = Number.isSafeInteger(initialPage) && initialPage > 0 ? initialPage : 1;
   queryParams.get("category")?.split(",").forEach((category) => {
     if (categoryById.has(category)) selectedCategories.add(category);
   });
@@ -388,14 +346,6 @@ document.querySelector(".catalog-bottom").addEventListener("click", (event) => {
   if (event.target.closest(".back-to-top-link")) window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-elements.pagination.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-page]");
-  if (!button || button.disabled) return;
-  currentPage = Number(button.dataset.page);
-  render({ preservePage: true });
-  elements.productGrid.scrollIntoView({ behavior: "smooth", block: "start" });
-});
-
 elements.productGrid.addEventListener("click", (event) => {
   const button = event.target.closest(".shop-add-button");
   if (button) {
@@ -428,4 +378,16 @@ document.querySelector(".search-button").addEventListener("click", () => {
 });
 
 initializeFromUrl();
+elements.catalogStatus.textContent = "Checking for the latest products…";
 render({ preservePage: true });
+window.addEventListener("soms-catalog-updated", () => {
+  elements.catalogStatus.textContent = "";
+  render({ preservePage: true });
+});
+window.addEventListener("soms-catalog-error", () => {
+  elements.catalogStatus.textContent = "Showing saved products. The latest catalogue could not be loaded.";
+});
+window.SomsCatalog.refresh().catch((error) => {
+  console.error("Could not load the latest shop catalogue.", error);
+  window.dispatchEvent(new CustomEvent("soms-catalog-error", { detail: error }));
+});

@@ -183,10 +183,19 @@ async function githubRequest(path, token, options = {}) {
 async function readCurrentCatalogue(token) {
   const reference = await githubRequest(`/git/ref/heads/${BRANCH}`, token);
   const file = await githubRequest(`/contents/${CATALOG_PATH}?ref=${encodeURIComponent(reference.object.sha)}`, token);
-  if (file.encoding !== "base64" || typeof file.content !== "string") {
+  let source;
+  if (file.encoding === "base64" && typeof file.content === "string" && file.content.length > 0) {
+    source = Buffer.from(file.content, "base64").toString("utf8");
+  } else if (typeof file.sha === "string") {
+    const blob = await githubRequest(`/git/blobs/${encodeURIComponent(file.sha)}`, token);
+    if (blob.encoding !== "base64" || typeof blob.content !== "string") {
+      throw new Error("The catalogue file could not be read from GitHub.");
+    }
+    source = Buffer.from(blob.content, "base64").toString("utf8");
+  } else {
     throw new Error("The catalogue file could not be read from GitHub.");
   }
-  const data = extractCatalogue(Buffer.from(file.content, "base64").toString("utf8"));
+  const data = extractCatalogue(source);
   const validation = validateCatalogue(data.products, data.storeSettings);
   if (validation) throw new Error(`The GitHub catalogue is invalid: ${validation}`);
   return { ...data, baseSha: reference.object.sha };
@@ -274,7 +283,7 @@ async function updateCatalogue(token, payload) {
   });
 }
 
-export default async function handler(request) {
+async function handler(request) {
   const sessionSecret = process.env.ADMIN_SESSION_SECRET;
   const token = process.env.GITHUB_TOKEN;
   if (!sessionSecret || sessionSecret.length < 32 || !token) {
@@ -320,3 +329,5 @@ export default async function handler(request) {
     return jsonResponse({ error: `Could not save changes to GitHub${error.status ? ` (HTTP ${error.status})` : ""}. Check your Netlify token settings and try again.` }, 502);
   }
 }
+
+export { handler as default, readCurrentCatalogue };

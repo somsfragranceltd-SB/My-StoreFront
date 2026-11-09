@@ -68,7 +68,23 @@ function renderHomeProducts() {
     </article>`;
   }).join("")}`;
 }
+function setHomeCatalogueStatus(message) {
+  document.querySelector(".product-list .search-results").textContent = message;
+}
+
+setHomeCatalogueStatus("Checking for the latest products…");
 renderHomeProducts();
+window.addEventListener("soms-catalog-updated", () => {
+  setHomeCatalogueStatus("");
+  renderHomeProducts();
+});
+window.addEventListener("soms-catalog-error", () => {
+  setHomeCatalogueStatus("Showing saved products. The latest catalogue could not be loaded.");
+});
+window.SomsCatalog.refresh().catch((error) => {
+  console.error("Could not load the latest home product catalogue.", error);
+  window.dispatchEvent(new CustomEvent("soms-catalog-error", { detail: error }));
+});
 window.addEventListener("storage", (event) => {
   if (event.key !== "soms-fragrance-cart-count") return;
   const updatedCount = Number(event.newValue || 0);

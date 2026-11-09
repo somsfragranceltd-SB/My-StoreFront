@@ -6,6 +6,11 @@
   to = "/.netlify/functions/catalog"
   status = 200
 
+[[redirects]]
+  from = "/api/store-catalog"
+  to = "/.netlify/functions/store-catalog"
+  status = 200
+
 [[headers]]
   for = "/catalog-data.js"
   [headers.values]
