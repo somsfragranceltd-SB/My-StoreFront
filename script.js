@@ -56,8 +56,8 @@ function renderHomeProducts() {
     const badge = product.badge ? `<span class="product-tag">${escapeHtml(product.badge)}</span>` : "";
     const oldPrice = product.oldPrice ? `<del>${formatHomePrice(product.oldPrice)}</del>` : "";
     const stockText = product.stock > 0 ? `<button class="cart-button" type="button" data-product-id="${escapeHtml(product.id)}" data-product="${escapeHtml(product.name)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2 10h10l2-7H7M10 19a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm7 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg><span>Add to Cart</span></button>` : '<button class="cart-button" type="button" disabled>Sold out</button>';
-    return `<article class="product-card">
-      <a class="product-image" href="shop.html?category=${encodeURIComponent(product.category)}" aria-label="View ${escapeHtml(product.name)} in the shop">
+    return `<article class="product-card" data-product-id="${escapeHtml(product.id)}">
+      <a class="product-image" href="shop.html?category=${encodeURIComponent(product.category)}" aria-label="View details for ${escapeHtml(product.name)}">
         <img src="${escapeHtml(homeImageUrl(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy">
         ${badge}<span class="quick-view">Discover <span aria-hidden="true">↗</span></span>
       </a>
@@ -111,24 +111,32 @@ searchForm.addEventListener("submit", (event) => {
 
 document.querySelector(".product-list").addEventListener("click", (event) => {
   const button = event.target.closest(".cart-button");
-  if (!button) return;
-  if (!window.SomsCart.add(button.dataset.productId)) return;
-  if (lastAddedButton) {
-    lastAddedButton.classList.remove("is-added");
-    lastAddedButton.querySelector("span").textContent = "Add to Cart";
+  if (button) {
+    if (!window.SomsCart.add(button.dataset.productId)) return;
+    if (lastAddedButton) {
+      lastAddedButton.classList.remove("is-added");
+      lastAddedButton.querySelector("span").textContent = "Add to Cart";
+    }
+    lastAddedButton = button;
+    cartToast.textContent = `${button.dataset.product} added to your bag`;
+    cartToast.classList.add("is-visible");
+    button.classList.add("is-added");
+    button.querySelector("span").textContent = "Added";
+    window.clearTimeout(toastTimeout);
+    toastTimeout = window.setTimeout(() => {
+      cartToast.classList.remove("is-visible");
+      button.classList.remove("is-added");
+      button.querySelector("span").textContent = "Add to Cart";
+      lastAddedButton = null;
+    }, 2200);
+    return;
   }
-  lastAddedButton = button;
-  cartToast.textContent = `${button.dataset.product} added to your bag`;
-  cartToast.classList.add("is-visible");
-  button.classList.add("is-added");
-  button.querySelector("span").textContent = "Added";
-  window.clearTimeout(toastTimeout);
-  toastTimeout = window.setTimeout(() => {
-    cartToast.classList.remove("is-visible");
-    button.classList.remove("is-added");
-    button.querySelector("span").textContent = "Add to Cart";
-    lastAddedButton = null;
-  }, 2200);
+
+  const card = event.target.closest(".product-card");
+  if (!card || event.target.closest("button")) return;
+  event.preventDefault();
+  const product = homeProducts.find((item) => item.id === card.dataset.productId);
+  if (product) window.SomsProductDetails.open(product);
 });
 
 newsletterForm.addEventListener("submit", (event) => {

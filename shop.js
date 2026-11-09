@@ -131,6 +131,7 @@ function renderProduct(product) {
   return `<article class="shop-product" data-id="${escapeHtml(product.id)}">
     <div class="shop-product-photo">
       ${badge}<img src="${escapeHtml(productImageUrl(product.image))}" alt="${escapeHtml(product.name)}" loading="lazy">
+      <button class="shop-product-quick-view" type="button" aria-label="View details for ${escapeHtml(product.name)}">View details</button>
     </div>
     <div class="shop-product-info">
       <p class="shop-product-category">${escapeHtml(category)}</p>
@@ -345,20 +346,28 @@ document.querySelector(".catalog-bottom").addEventListener("click", (event) => {
 
 elements.productGrid.addEventListener("click", (event) => {
   const button = event.target.closest(".shop-add-button");
-  if (!button || button.disabled) return;
-  const product = products.find((item) => item.id === button.dataset.productId);
-  if (!product) return;
-  if (!window.SomsCart.add(product.id)) return;
-  elements.cartToast.textContent = `${product.name} added to your bag`;
-  elements.cartToast.classList.add("is-visible");
-  button.classList.add("is-added");
-  button.querySelector("span").textContent = "Added";
-  window.clearTimeout(toastTimeout);
-  toastTimeout = window.setTimeout(() => {
-    elements.cartToast.classList.remove("is-visible");
-    button.classList.remove("is-added");
-    button.querySelector("span").textContent = "Add to bag";
-  }, 1800);
+  if (button) {
+    if (button.disabled) return;
+    const product = products.find((item) => item.id === button.dataset.productId);
+    if (!product) return;
+    if (!window.SomsCart.add(product.id)) return;
+    elements.cartToast.textContent = `${product.name} added to your bag`;
+    elements.cartToast.classList.add("is-visible");
+    button.classList.add("is-added");
+    button.querySelector("span").textContent = "Added";
+    window.clearTimeout(toastTimeout);
+    toastTimeout = window.setTimeout(() => {
+      elements.cartToast.classList.remove("is-visible");
+      button.classList.remove("is-added");
+      button.querySelector("span").textContent = "Add to bag";
+    }, 1800);
+    return;
+  }
+
+  const card = event.target.closest(".shop-product");
+  if (!card || (event.target.closest("button, a") && !event.target.closest(".shop-product-quick-view"))) return;
+  const product = products.find((item) => item.id === card.dataset.id);
+  if (product) window.SomsProductDetails.open(product);
 });
 
 document.querySelector(".search-button").addEventListener("click", () => {
