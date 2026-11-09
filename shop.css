@@ -47,6 +47,12 @@
 .filter-chip { min-height: 25px; display: inline-flex; align-items: center; gap: 7px; padding: 0 9px; border: 1px solid var(--border); border-radius: 14px; color: var(--plum); background: #fbf3ee; font-size: 9px; }
 .filter-chip span { color: var(--muted); font-size: 14px; line-height: 1; }
 .shop-page .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px 14px; margin-top: 15px; }
+.product-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; padding: 22px 0; }
+.product-pagination[hidden] { display: none; }
+.product-pagination button { min-width: 34px; min-height: 34px; padding: 0 10px; border: 1px solid var(--border); border-radius: 18px; color: var(--plum); background: #fffaf7; font-size: 10px; }
+.product-pagination button:hover:not(:disabled), .product-pagination button[aria-current="page"] { border-color: var(--plum); color: var(--white); background: var(--plum); }
+.product-pagination button:disabled { opacity: .45; cursor: not-allowed; }
+.pagination-ellipsis { padding: 0 2px; color: var(--muted); font-size: 11px; }
 .shop-product { min-width: 0; padding: 8px; border: 1px solid rgba(72,43,58,.07); border-radius: 8px; background: #fffaf7; box-shadow: 0 2px 8px rgba(72,43,58,.045); cursor: pointer; }
 .shop-product[hidden] { display: none; }
 .shop-product-photo { position: relative; display: block; overflow: hidden; aspect-ratio: .94; border-radius: 5px; background: #f1e2da; }
@@ -116,6 +122,8 @@
   .apply-filters { position: sticky; bottom: 0; width: 100%; min-height: 42px; display: block; margin-top: 14px; border: 0; border-radius: 22px; color: var(--white); background: var(--plum); font-size: 11px; font-weight: 700; }
   .catalog-search { height: 36px; }
   .shop-page .product-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 11px; margin-top: 12px; }
+  .product-pagination { gap: 4px; padding: 16px 0; }
+  .product-pagination button { min-width: 31px; min-height: 31px; padding: 0 8px; font-size: 9px; }
   .shop-product { padding: 6px; }
   .shop-product-photo { aspect-ratio: .86; }
   .shop-product-badge { top: 6px; left: 6px; font-size: 7px; }
