@@ -98,12 +98,12 @@ export default async function adminAccess(request, context) {
     return jsonResponse({ error: "Request rejected." }, 403);
   }
 
-  const password = Netlify.env.get("ADMIN_PASSWORD");
-  const sessionSecret = Netlify.env.get("ADMIN_SESSION_SECRET");
+  const password = context.env?.ADMIN_PASSWORD ?? globalThis.Netlify?.env?.get("ADMIN_PASSWORD");
+  const sessionSecret = context.env?.ADMIN_SESSION_SECRET ?? globalThis.Netlify?.env?.get("ADMIN_SESSION_SECRET");
   if (!password || !sessionSecret || sessionSecret.length < 32 || sessionSecret === password) {
     return isAdminPage
       ? new Response("Admin access is not configured.", { status: 503, headers: { "Cache-Control": "no-store" } })
-      : jsonResponse({ error: "Secure admin access is not configured on Netlify yet." }, 503);
+      : jsonResponse({ error: "Secure admin access is not configured on this host yet." }, 503);
   }
 
   if (isLogin) {

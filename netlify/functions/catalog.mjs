@@ -283,11 +283,11 @@ async function updateCatalogue(token, payload) {
   });
 }
 
-async function handler(request) {
-  const sessionSecret = process.env.ADMIN_SESSION_SECRET;
-  const token = process.env.GITHUB_TOKEN;
+async function handler(request, env = process.env) {
+  const sessionSecret = env.ADMIN_SESSION_SECRET;
+  const token = env.GITHUB_TOKEN;
   if (!sessionSecret || sessionSecret.length < 32 || !token) {
-    return jsonResponse({ error: "Catalogue publishing is not configured on Netlify." }, 503);
+    return jsonResponse({ error: "Catalogue publishing is not configured on this host." }, 503);
   }
   if (!hasValidSession(request, sessionSecret)) return jsonResponse({ error: "Admin session is missing or expired." }, 401);
 
@@ -326,7 +326,7 @@ async function handler(request) {
     return await updateCatalogue(token, payload);
   } catch (error) {
     console.error("Could not update the GitHub catalogue.", error.message);
-    return jsonResponse({ error: `Could not save changes to GitHub${error.status ? ` (HTTP ${error.status})` : ""}. Check your Netlify token settings and try again.` }, 502);
+    return jsonResponse({ error: `Could not save changes to GitHub${error.status ? ` (HTTP ${error.status})` : ""}. Check your host token settings and try again.` }, 502);
   }
 }
 

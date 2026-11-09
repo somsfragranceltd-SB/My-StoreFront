@@ -1,0 +1,12 @@
+.git/
+.netlify/
+.wrangler/
+netlify/
+tests/
+wrangler.jsonc
+cloudflare-worker.mjs
+.assetsignore
+.gitignore
+cloudflare-secrets.json
+README.md
+netlify.toml

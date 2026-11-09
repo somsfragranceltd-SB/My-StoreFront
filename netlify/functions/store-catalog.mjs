@@ -14,14 +14,14 @@ function jsonResponse(body, status = 200, cacheControl = "no-store") {
   });
 }
 
-export default async function handler(request) {
+export default async function handler(request, env = process.env) {
   if (request.method !== "GET") {
     return jsonResponse({ error: "Method not allowed." }, 405);
   }
 
-  const token = process.env.GITHUB_TOKEN;
+  const token = env.GITHUB_TOKEN;
   if (!token) {
-    return jsonResponse({ error: "The store catalogue is not configured on Netlify." }, 503);
+    return jsonResponse({ error: "The store catalogue is not configured on this host." }, 503);
   }
 
   try {

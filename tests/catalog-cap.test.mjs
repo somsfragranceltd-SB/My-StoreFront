@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
+import cloudflareWorker from "../cloudflare-worker.mjs";
 import handler from "../netlify/functions/catalog.mjs";
 import publicCatalogHandler from "../netlify/functions/store-catalog.mjs";
 
@@ -54,7 +55,7 @@ test("catalogue API accepts up to 2,000 products", async () => {
   const originalFetch = globalThis.fetch;
   const requests = [];
   process.env.ADMIN_SESSION_SECRET = sessionSecret;
-  process.env.GITHUB_TOKEN = "test-token";
+  delete process.env.GITHUB_TOKEN;
   globalThis.fetch = async (url, options = {}) => {
     requests.push({ url: String(url), method: options.method || "GET", body: options.body });
     if (String(url).includes("/git/ref/heads/main")) return Response.json({ object: { sha: "a".repeat(40) } });
@@ -68,7 +69,10 @@ test("catalogue API accepts up to 2,000 products", async () => {
   };
 
   try {
-    const response = await handler(createRequest(createProducts(2000)));
+    const response = await handler(createRequest(createProducts(2000)), {
+      ADMIN_SESSION_SECRET: sessionSecret,
+      GITHUB_TOKEN: "test-token",
+    });
     assert.equal(response.status, 200);
     assert.equal((await response.json()).products.length, 2000);
     assert.equal(requests.length, 5);
@@ -157,7 +161,10 @@ test("public store catalogue serves the latest 2,000 products without an admin s
   };
 
   try {
-    const response = await publicCatalogHandler(new Request("https://store.example/api/store-catalog"));
+    const response = await publicCatalogHandler(
+      new Request("https://store.example/api/store-catalog"),
+      { GITHUB_TOKEN: "test-token" },
+    );
     assert.equal(response.status, 200);
     assert.equal(response.headers.get("cache-control"), "public, max-age=0, s-maxage=5");
     assert.equal(response.headers.get("netlify-cdn-cache-control"), "public, s-maxage=5");
@@ -174,4 +181,40 @@ test("public store catalogue serves the latest 2,000 products without an admin s
     if (originalSecret === undefined) delete process.env.ADMIN_SESSION_SECRET;
     else process.env.ADMIN_SESSION_SECRET = originalSecret;
   }
+});
+
+test("Cloudflare Worker serves static files and routes catalogue APIs", async () => {
+  const assetRequests = [];
+  const env = {
+    ASSETS: {
+      fetch: async (request) => {
+        assetRequests.push(new URL(request.url).pathname);
+        return new Response(new URL(request.url).pathname);
+      },
+    },
+  };
+  const homeResponse = await cloudflareWorker.fetch(new Request("https://store.example/"), env);
+  assert.equal(await homeResponse.text(), "/index.html");
+  assert.equal(assetRequests.includes("/index.html"), true);
+
+  const staticResponse = await cloudflareWorker.fetch(
+    new Request("https://store.example/catalog-data.js"),
+    env,
+  );
+  assert.equal(await staticResponse.text(), "/catalog-data.js");
+  assert.equal(staticResponse.headers.get("cache-control"), "no-cache, no-store, must-revalidate");
+  assert.equal(assetRequests.includes("/catalog-data.js"), true);
+
+  const catalogueResponse = await cloudflareWorker.fetch(
+    new Request("https://store.example/api/store-catalog"),
+    env,
+  );
+  assert.equal(catalogueResponse.status, 503);
+  assert.match((await catalogueResponse.json()).error, /not configured/);
+
+  const adminResponse = await cloudflareWorker.fetch(
+    new Request("https://store.example/admin.html"),
+    env,
+  );
+  assert.equal(adminResponse.status, 503);
 });
